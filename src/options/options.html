@@ -9,28 +9,20 @@
 <body>
     <div class="container options-container">
         <h1>⚙️ Configurações</h1>
-        
+
         <form id="settingsForm">
             <div class="form-group">
                 <label for="giteaUrl">URL do Servidor Gitea:</label>
-                <input 
-                    type="url" 
-                    id="giteaUrl" 
-                    name="giteaUrl" 
+                <input type="url" id="giteaUrl" name="giteaUrl"
                     placeholder="https://gitea.example.com"
-                    required
                 >
                 <small>Ex: https://gitea.example.com</small>
             </div>
 
             <div class="form-group">
                 <label for="giteaToken">Token de Acesso (API):</label>
-                <input 
-                    type="password" 
-                    id="giteaToken" 
-                    name="giteaToken" 
+                <input type="password" id="giteaToken" name="giteaToken"
                     placeholder="Seu token do Gitea"
-                    required
                 >
                 <small>
                     <a href="https://docs.gitea.io/en-us/api-usage/" target="_blank">
@@ -41,16 +33,19 @@
 
             <div class="form-group">
                 <label for="checkInterval">Intervalo de Verificação (minutos):</label>
-                <input 
-                    type="number" 
-                    id="checkInterval" 
-                    name="checkInterval" 
-                    min="0.5" 
+                <input type="number" id="checkInterval" name="checkInterval" min="0.5"
                     step="0.5"
                     value="0.5"
-                    required
                 >
                 <small>Mínimo: 0.5 minutos (30 segundos)</small>
+            </div>
+
+            <div class="form-group keep-notification">
+                <label for="keepNotification">Manter Notificação Ativa:</label>
+                <input type="checkbox" id="keepNotification" name="keepNotification">
+                <label class="button" for="keepNotification">
+                    <div class="dot"></div>
+                </label>
             </div>
 
             <div class="button-group">
@@ -77,6 +72,7 @@
         <p class="footer">v1.0.0 | <a href="https://github.com/seu-usuario/gitea-notifier" target="_blank">GitHub</a></p>
     </div>
 
+    <script src="../utils/storage.js"></script>
     <script src="options.js"></script>
 </body>
 </html>

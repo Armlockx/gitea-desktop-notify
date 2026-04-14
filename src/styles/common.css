@@ -46,7 +46,6 @@ h3 {
 .status {
     font-size: 18px;
     font-weight: 600;
-    margin-bottom: 12px;
     color: #666;
 }
 
@@ -58,7 +57,7 @@ h3 {
     border-radius: 4px;
 }
 
-.settings-preview p {
+.settings-preview .connection-info {
     font-size: 14px;
     margin: 8px 0;
 }
@@ -66,6 +65,11 @@ h3 {
 .settings-preview span {
     font-weight: 600;
     color: #2563eb;
+}
+
+.keep-notification {
+    display: inline-flex;
+    gap: 10px;
 }
 
 /* Options Page Styles */
@@ -232,16 +236,44 @@ hr {
 
 /* Responsive */
 @media (max-width: 480px) {
-    .container {
-        min-width: 100%;
-        border-radius: 0;
-    }
-    
     .button-group {
         flex-direction: column;
     }
-    
+
     .btn {
         width: 100%;
     }
+}
+
+input#keepNotification {
+    display:none;
+}
+
+.button {
+  position: relative;
+  width: 2.4rem;
+  height: 1.4rem;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #f3f4f6, #e6e9ef);
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.12), inset -2px -2px 5px rgba(255,255,255,0.6);
+  cursor:pointer;
+  display:inline-block;
+}
+
+.button .dot {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  left: 0.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background-color: #aab7d9;
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.12), -3px -3px 6px rgba(255,255,255,0.6);
+  transition: left 0.25s ease, background-color 0.25s ease;
+}
+
+input#keepNotification:checked + .button .dot {
+  left: calc(100% - 1.2rem);
+  background-color: #4a6dc6;
 }

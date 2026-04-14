@@ -9,21 +9,36 @@
 <body>
     <div class="container">
         <h1>🔔 Gitea Notifier</h1>
-        
+
         <div class="status-section">
             <div id="status" class="status">🔴 Desconectado</div>
-            <button id="checkNow" class="btn btn-primary">Verificar Agora</button>
         </div>
 
         <div class="settings-preview">
-            <p><strong>Servidor:</strong> <span id="serverUrl">Não configurado</span></p>
-            <p><strong>Intervalo de verificação:</strong> <span id="intervalValue">0.5</span> minutos</p>
+            <p class="connection-info keep-notification"><strong>Servidor:</strong> <span id="serverUrl">Não configurado</span>
+            </p>
+            <p class="connection-info keep-notification"><strong>Intervalo de verificação:</strong> <span
+                    id="intervalValue">0.5</span> minutos
+            </p>
+            <div class="connection-info keep-notification">
+                <strong>Manter Notificação:</strong>
+                <div class="toggle-wrapper">
+                    <div class="wrapper">
+                        <input id="keepNotification" type="checkbox">
+                        <label class="button" for="keepNotification">
+                            <span class="dot"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <a href="../options/options.html" class="btn btn-secondary">⚙️ Configurações</a>
         <p class="footer">v1.0.0</p>
     </div>
 
+    <script src="../utils/storage.js"></script>
     <script src="popup.js"></script>
 </body>
 </html>
