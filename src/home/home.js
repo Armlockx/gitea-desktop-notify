@@ -1,3 +1,5 @@
+const api = typeof browser !== 'undefined' ? browser : chrome;
+
 document.addEventListener("DOMContentLoaded", () => {
     const skipBtn = document.getElementById("skipBtn");
     const closeBtn = document.getElementById("closeBtn");
@@ -12,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadExistingSettings() {
-    const settings = await chrome.storage.sync.get(["giteaUrl", "giteaToken", "checkInterval"]);
-    
+    const settings = await api.storage.sync.get(["giteaUrl", "giteaToken", "checkInterval"]);
+
     if (settings.giteaUrl) {
         document.getElementById("giteaUrl").value = settings.giteaUrl;
     }
@@ -59,7 +61,7 @@ async function handleSubmit(e) {
         if (!res.ok) {
             submitBtn.disabled = false;
             submitBtn.textContent = "Continuar";
-            
+
             if (res.status === 401) {
                 showMessage("❌ Token inválido. Verifique suas credenciais.", "error");
             } else if (res.status === 404) {
@@ -71,7 +73,7 @@ async function handleSubmit(e) {
         }
 
         // Sucesso! Salva as configurações
-        await chrome.storage.sync.set({
+        await api.storage.sync.set({
             giteaUrl: giteaUrl,
             giteaToken: giteaToken,
             checkInterval: checkInterval
@@ -92,7 +94,7 @@ function showMessage(text, type) {
     messageDiv.textContent = text;
     messageDiv.className = "message " + type;
     messageDiv.style.display = "block";
-    
+
     // Remove a mensagem depois de 5 segundos se for sucesso
     if (type === "success") {
         setTimeout(() => {
@@ -104,19 +106,22 @@ function showMessage(text, type) {
 function showSuccessScreen() {
     const formContent = document.getElementById("formContent");
     const successContent = document.getElementById("successContent");
-    
+
     formContent.style.display = "none";
     successContent.classList.add("show");
 }
 
-function closeWindow() {
-    // Fecha a aba/janela
+async function closeWindow() {
+    // Fecha a janela e remove a aba ativa
     window.close();
-    
-    // Se for uma tab no navegador, tenta fechar
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+
+    try {
+        // Remove a aba ativa se houver
+        const tabs = await api.tabs.query({ active: true, currentWindow: true });
         if (tabs[0]) {
-            chrome.tabs.remove(tabs[0].id);
+            await api.tabs.remove(tabs[0].id);
         }
-    });
+    } catch (err) {
+        console.warn("Não foi possível fechar a aba:", err);
+    }
 }

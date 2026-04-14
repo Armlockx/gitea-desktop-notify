@@ -1,6 +1,6 @@
 # 🔔 Gitea Notifier
 
-Uma extensão Chrome que envia notificações em tempo real de atividades no seu servidor [Gitea](https://gitea.io/). Nunca mais perca um comentário, PR ou issue importante!
+Uma extensão para **Chrome** e **Firefox** que envia notificações em tempo real de atividades no seu servidor [Gitea](https://gitea.io/). Nunca mais perca um comentário, PR ou issue importante!
 
 ## ✨ Recursos
 
@@ -10,6 +10,7 @@ Uma extensão Chrome que envia notificações em tempo real de atividades no seu
 - ⏱️ Intervalo de verificação ajustável
 - 🖱️ Clique na notificação para abrir a atividade diretamente
 - 🎯 Suporta múltiplos servidores Gitea
+- 🌐 Compatível com Chrome e Firefox (Manifest V3)
 
 ## 📦 Instalação
 
@@ -21,17 +22,25 @@ Uma extensão Chrome que envia notificações em tempo real de atividades no seu
 
 1. Clone ou baixe este repositório:
 ```bash
-git clone https://github.com/seu-usuario/gitea-notifier.git
-cd gitea-notifier
+git clone https://github.com/MVoikolesco/gitea-desktop-notify.git
+cd gitea-desktop-notify
 ```
 
+#### Google Chrome
+
 2. Abra o Chrome e vá para `chrome://extensions/`
-
-3. Ative o "Modo de desenvolvedor" (canto superior direito)
-
-4. Clique em "Carregar extensão sem pacote" e selecione a pasta do projeto
-
+3. Ative o **"Modo de desenvolvedor"** (canto superior direito)
+4. Clique em **"Carregar extensão sem pacote"** e selecione a pasta do projeto
 5. Clique na extensão e vá para configurações
+
+#### Mozilla Firefox
+
+2. Abra o Firefox e vá para `about:debugging#/runtime/this-firefox`
+3. Clique em **"Carregar extensão temporária..."**
+4. Selecione o arquivo `manifest.json` na pasta do projeto
+5. Clique na extensão e vá para configurações
+
+> **Nota:** Extensões temporárias no Firefox são removidas ao fechar o navegador. Para instalação permanente, é necessário empacotar e assinar a extensão via [Firefox Add-ons (AMO)](https://addons.mozilla.org/developers/).
 
 ## 🚀 Como Usar
 
@@ -40,7 +49,7 @@ cd gitea-notifier
 1. Acesse seu servidor Gitea
 2. Vá para **Configurações** → **Aplicações** → **Token**
 3. Clique em **Gerar Novo Token**
-4. Dê um nome (ex: "Notificador Chrome")
+4. Dê um nome (ex: "Gitea Notifier")
 5. Selecione o escopo `notification:read`
 6. Copie o token gerado
 
@@ -71,10 +80,18 @@ cd gitea-notifier
 
 ### Tecnologias
 
-- Chrome Extensions API v3 (Manifest V3)
+- WebExtensions API (Manifest V3)
 - Fetch API
-- Chrome Storage API
-- Chrome Notifications API
+- Storage API (`browser.storage` / `chrome.storage`)
+- Notifications API
+- Alarms API
+
+### Compatibilidade
+
+| Navegador | Versão mínima |
+|-----------|---------------|
+| Chrome    | 91+           |
+| Firefox   | 109+          |
 
 ## 📝 Licença
 
