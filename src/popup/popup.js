@@ -1,29 +1,52 @@
+// `storage` vem do módulo compartilhado ../utils/storage.js
+const storage = (typeof window !== 'undefined' && window.storage) ? window.storage : ((typeof globalThis !== 'undefined') ? globalThis.storage : null);
+
 document.addEventListener("DOMContentLoaded", () => {
     loadSettings();
 
-    document.getElementById("checkNow").addEventListener("click", checkNotificationsNow);
+    const checkNowBtn = document.getElementById("checkNow");
+    if (checkNowBtn) checkNowBtn.addEventListener("click", checkNotificationsNow);
+
+    const keepEl = document.getElementById("keepNotification");
+    if (keepEl) {
+        keepEl.addEventListener("change", async (e) => {
+            try {
+                await storage.set({ keepNotification: e.target.checked });
+            } catch (err) {
+                console.error('Erro ao salvar keepNotification:', err);
+            }
+        });
+    }
 });
 
 async function loadSettings() {
-    const settings = await chrome.storage.sync.get(["giteaUrl", "checkInterval", "keepNotification"]);
+    const settings = await storage.get(["giteaUrl", "checkInterval", "keepNotification"]);
+
+    const serverUrlEl = document.getElementById("serverUrl");
+    const statusEl = document.getElementById("status");
+    const intervalEl = document.getElementById("intervalValue");
+    const keepEl = document.getElementById("keepNotification");
 
     if (settings.giteaUrl) {
-        document.getElementById("serverUrl").textContent = settings.giteaUrl;
-        document.getElementById("status").textContent = "🟢 Conectado";
-        document.getElementById("status").style.color = "#22c55e";
+        serverUrlEl.textContent = settings.giteaUrl;
+        statusEl.textContent = "🟢 Conectado";
+        statusEl.style.color = "#22c55e";
+    } else {
+        serverUrlEl.textContent = "Não configurado";
+        statusEl.textContent = "🔴 Desconectado";
+        statusEl.style.color = "";
     }
 
     if (settings.checkInterval) {
-        document.getElementById("intervalValue").textContent = settings.checkInterval;
+        intervalEl.textContent = settings.checkInterval;
     }
 
-    if (settings.keepNotification) {
-        document.getElementById("keepNotification").textContent = settings.keepNotification;
-    }
+    if (keepEl) keepEl.checked = !!settings.keepNotification;
 }
 
 async function checkNotificationsNow() {
     const btn = document.getElementById("checkNow");
+    if (!btn) return;
     btn.disabled = true;
     btn.textContent = "Verificando...";
 
