@@ -1,6 +1,6 @@
 {
   "name": "gitea-desktop-notify",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Uma extensão para Chrome e Firefox que envia notificações em tempo real do Gitea",
   "author": "MVoikolesco",
   "license": "MIT",
