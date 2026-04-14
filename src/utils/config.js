@@ -2,6 +2,7 @@
  * Arquivo de configurações compartilhadas
  * Constantes e funções auxiliares usadas em toda a extensão
  */
+const api = typeof browser !== 'undefined' ? browser : chrome;
 
 const CONFIG = {
     API_VERSION: "v1",
@@ -23,7 +24,7 @@ const CONFIG = {
  * Obter configurações do armazenamento
  */
 async function getStorageSettings() {
-    return await chrome.storage.sync.get([
+    return await api.storage.sync.get([
         CONFIG.STORAGE_KEYS.GITEA_URL,
         CONFIG.STORAGE_KEYS.GITEA_TOKEN,
         CONFIG.STORAGE_KEYS.CHECK_INTERVAL
@@ -38,8 +39,8 @@ async function saveStorageSettings(url, token, interval) {
     settings[CONFIG.STORAGE_KEYS.GITEA_URL] = url;
     settings[CONFIG.STORAGE_KEYS.GITEA_TOKEN] = token;
     settings[CONFIG.STORAGE_KEYS.CHECK_INTERVAL] = interval;
-    
-    return await chrome.storage.sync.set(settings);
+
+    return await api.storage.sync.set(settings);
 }
 
 /**
