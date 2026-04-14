@@ -2,8 +2,11 @@ document.addEventListener("DOMContentLoaded", loadSettings);
 document.getElementById("settingsForm").addEventListener("submit", saveSettings);
 document.getElementById("testBtn").addEventListener("click", testConnection);
 
+// `storage` vem do módulo compartilhado ../utils/storage.js
+const storage = (typeof window !== 'undefined' && window.storage) ? window.storage : ((typeof globalThis !== 'undefined') ? globalThis.storage : null);
+
 async function loadSettings() {
-    const settings = await chrome.storage.sync.get(["giteaUrl", "giteaToken", "checkInterval", "keepNotification"]);
+    const settings = await storage.get(["giteaUrl", "giteaToken", "checkInterval", "keepNotification"]);
 
     if (settings.giteaUrl) {
         document.getElementById("giteaUrl").value = settings.giteaUrl;
@@ -24,12 +27,11 @@ async function saveSettings(e) {
 
     const giteaUrl = document.getElementById("giteaUrl").value.trim();
     const giteaToken = document.getElementById("giteaToken").value.trim();
-    const checkInterval = parseFloat(document.getElementById("checkInterval").value);
+    let checkInterval = parseFloat(document.getElementById("checkInterval").value);
     const keepNotification = document.getElementById("keepNotification").checked;
 
-    if (!giteaUrl || !giteaToken) {
-        showMessage("Por favor, preencha todos os campos obrigatórios.", "error");
-        return;
+    if (isNaN(checkInterval)) {
+        checkInterval = 0.5;
     }
 
     if (checkInterval < 0.5) {
@@ -38,7 +40,7 @@ async function saveSettings(e) {
     }
 
     try {
-        await chrome.storage.sync.set({
+        await storage.set({
             giteaUrl: giteaUrl,
             giteaToken: giteaToken,
             checkInterval: checkInterval,
