@@ -64,7 +64,7 @@ async function checkNotifications() {
                     iconUrl: chrome.runtime.getURL("icons/icon-48.png"),
                     title: title,
                     message: message,
-                    requireInteraction: false
+                    requireInteraction: true,
                 });
 
                 console.log(`Notificação criada: ${title}`);
