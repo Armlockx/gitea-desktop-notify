@@ -1,33 +1,14 @@
 // Storage wrapper: fornece `storage.get(keys)` e `storage.set(items)` que retornam Promises.
 // Funciona com `chrome.storage.sync`, `browser.storage.sync` ou fallback para localStorage.
 (function () {
-    function createStorage() {
-        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-            const sync = chrome.storage.sync;
-            return {
-                get: (keys) => new Promise((resolve, reject) => {
-                    try {
-                        const maybe = sync.get(keys, (res) => {
-                            if (chrome.runtime && chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-                            resolve(res || {});
-                        });
-                        if (maybe && typeof maybe.then === 'function') maybe.then(resolve).catch(reject);
-                    } catch (err) { reject(err); }
-                }),
-                set: (items) => new Promise((resolve, reject) => {
-                    try {
-                        const maybe = sync.set(items, () => {
-                            if (chrome.runtime && chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-                            resolve();
-                        });
-                        if (maybe && typeof maybe.then === 'function') maybe.then(resolve).catch(reject);
-                    } catch (err) { reject(err); }
-                })
-            };
-        }
+    const api = typeof browser !== 'undefined' ? browser : (typeof chrome !== 'undefined' ? chrome : null);
 
-        if (typeof browser !== 'undefined' && browser.storage && browser.storage.sync) {
-            return { get: (keys) => browser.storage.sync.get(keys), set: (items) => browser.storage.sync.set(items) };
+    function createStorage() {
+        if (api && api.storage && api.storage.sync) {
+            return {
+                get: (keys) => api.storage.sync.get(keys),
+                set: (items) => api.storage.sync.set(items)
+            };
         }
 
         return {
