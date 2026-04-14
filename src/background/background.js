@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener((details) => {
             url: chrome.runtime.getURL("src/home/home.html")
         });
     }
-    
+
     chrome.storage.sync.get(["giteaUrl", "giteaToken"], (result) => {
         if (result.giteaUrl && result.giteaToken) {
             startAlarm();
@@ -28,8 +28,8 @@ function startAlarm() {
 
 async function checkNotifications() {
     try {
-        const settings = await chrome.storage.sync.get(["giteaUrl", "giteaToken"]);
-        
+        const settings = await chrome.storage.sync.get(["giteaUrl", "giteaToken", "keepNotification"]);
+
         if (!settings.giteaUrl || !settings.giteaToken) {
             console.warn("Gitea URL ou TOKEN não configurados");
             return;
@@ -64,7 +64,7 @@ async function checkNotifications() {
                     iconUrl: chrome.runtime.getURL("icons/icon-48.png"),
                     title: title,
                     message: message,
-                    requireInteraction: true,
+                    requireInteraction: settings.keepNotification,
                 });
 
                 console.log(`Notificação criada: ${title}`);
