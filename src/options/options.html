@@ -15,7 +15,6 @@
                 <label for="giteaUrl">URL do Servidor Gitea:</label>
                 <input type="url" id="giteaUrl" name="giteaUrl"
                     placeholder="https://gitea.example.com"
-                    required
                 >
                 <small>Ex: https://gitea.example.com</small>
             </div>
@@ -24,7 +23,6 @@
                 <label for="giteaToken">Token de Acesso (API):</label>
                 <input type="password" id="giteaToken" name="giteaToken"
                     placeholder="Seu token do Gitea"
-                    required
                 >
                 <small>
                     <a href="https://docs.gitea.io/en-us/api-usage/" target="_blank">
@@ -38,7 +36,6 @@
                 <input type="number" id="checkInterval" name="checkInterval" min="0.5"
                     step="0.5"
                     value="0.5"
-                    required
                 >
                 <small>Mínimo: 0.5 minutos (30 segundos)</small>
             </div>
@@ -46,9 +43,9 @@
             <div class="form-group keep-notification">
                 <label for="keepNotification">Manter Notificação Ativa:</label>
                 <input type="checkbox" id="keepNotification" name="keepNotification">
-                <div class="button">
+                <label class="button" for="keepNotification">
                     <div class="dot"></div>
-                </div>
+                </label>
             </div>
 
             <div class="button-group">
