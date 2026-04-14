@@ -73,7 +73,7 @@ async function handleSubmit(e) {
         }
 
         // Sucesso! Salva as configurações
-        await chrome.storage.sync.set({
+        await api.storage.sync.set({
             giteaUrl: giteaUrl,
             giteaToken: giteaToken,
             checkInterval: checkInterval
