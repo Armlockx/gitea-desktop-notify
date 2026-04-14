@@ -3,8 +3,8 @@ document.getElementById("settingsForm").addEventListener("submit", saveSettings)
 document.getElementById("testBtn").addEventListener("click", testConnection);
 
 async function loadSettings() {
-    const settings = await chrome.storage.sync.get(["giteaUrl", "giteaToken", "checkInterval"]);
-    
+    const settings = await chrome.storage.sync.get(["giteaUrl", "giteaToken", "checkInterval", "keepNotification"]);
+
     if (settings.giteaUrl) {
         document.getElementById("giteaUrl").value = settings.giteaUrl;
     }
@@ -14,14 +14,18 @@ async function loadSettings() {
     if (settings.checkInterval) {
         document.getElementById("checkInterval").value = settings.checkInterval;
     }
+    if (settings.keepNotification !== undefined) {
+        document.getElementById("keepNotification").checked = settings.keepNotification;
+    }
 }
 
 async function saveSettings(e) {
     e.preventDefault();
-    
+
     const giteaUrl = document.getElementById("giteaUrl").value.trim();
     const giteaToken = document.getElementById("giteaToken").value.trim();
     const checkInterval = parseFloat(document.getElementById("checkInterval").value);
+    const keepNotification = document.getElementById("keepNotification").checked;
 
     if (!giteaUrl || !giteaToken) {
         showMessage("Por favor, preencha todos os campos obrigatórios.", "error");
@@ -37,7 +41,8 @@ async function saveSettings(e) {
         await chrome.storage.sync.set({
             giteaUrl: giteaUrl,
             giteaToken: giteaToken,
-            checkInterval: checkInterval
+            checkInterval: checkInterval,
+            keepNotification: keepNotification
         });
         showMessage("✓ Configurações salvas com sucesso!", "success");
     } catch (error) {
@@ -88,7 +93,7 @@ function showMessage(text, type) {
     const messageDiv = document.getElementById("message");
     messageDiv.textContent = text;
     messageDiv.className = "message " + type;
-    
+
     if (type === "success") {
         setTimeout(() => {
             messageDiv.textContent = "";
