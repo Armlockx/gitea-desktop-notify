@@ -1,34 +1,34 @@
+const api = typeof browser !== 'undefined' ? browser : chrome;
+
 let notificationUrls = {};
 let checkInterval = 0.5;
 
-chrome.runtime.onInstalled.addListener((details) => {
+api.runtime.onInstalled.addListener(async (details) => {
     if (details.reason === "install") {
-        chrome.tabs.create({
-            url: chrome.runtime.getURL("src/home/home.html")
+        await api.tabs.create({
+            url: api.runtime.getURL("src/home/home.html")
         });
     }
 
-    chrome.storage.sync.get(["giteaUrl", "giteaToken"], (result) => {
-        if (result.giteaUrl && result.giteaToken) {
-            startAlarm();
-        }
-    });
+    const result = await api.storage.sync.get(["giteaUrl", "giteaToken"]);
+    if (result.giteaUrl && result.giteaToken) {
+        startAlarm();
+    }
 });
 
-function startAlarm() {
-    chrome.alarms.getAll((alarms) => {
-        const exists = alarms.some(alarm => alarm.name === "checkGitea");
-        if (!exists) {
-            chrome.alarms.create("checkGitea", {
-                periodInMinutes: checkInterval
-            });
-        }
-    });
+async function startAlarm() {
+    const alarms = await api.alarms.getAll();
+    const exists = alarms.some(alarm => alarm.name === "checkGitea");
+    if (!exists) {
+        api.alarms.create("checkGitea", {
+            periodInMinutes: checkInterval
+        });
+    }
 }
 
 async function checkNotifications() {
     try {
-        const settings = await chrome.storage.sync.get(["giteaUrl", "giteaToken", "keepNotification"]);
+        const settings = await api.storage.sync.get(["giteaUrl", "giteaToken", "keepNotification"]);
 
         if (!settings.giteaUrl || !settings.giteaToken) {
             console.warn("Gitea URL ou TOKEN não configurados");
@@ -48,10 +48,10 @@ async function checkNotifications() {
 
         const data = await res.json();
 
-        const result = await chrome.storage.local.get("seen");
+        const result = await api.storage.local.get("seen");
         let seen = new Set(result.seen || []);
 
-        data.forEach(n => {
+        for (const n of data) {
             if (!seen.has(n.id)) {
                 seen.add(n.id);
                 notificationUrls[n.id] = n.subject.html_url;
@@ -59,49 +59,54 @@ async function checkNotifications() {
                 const title = `${n.repository.full_name} - ${n.subject.type}`;
                 const message = n.subject.title;
 
-                chrome.notifications.create(n.id.toString(), {
+                const notifOptions = {
                     type: "basic",
-                    iconUrl: chrome.runtime.getURL("icons/icon-48.png"),
+                    iconUrl: api.runtime.getURL("icons/icon-48.png"),
                     title: title,
                     message: message,
-                    requireInteraction: settings.keepNotification,
-                });
+                };
 
-                console.log(`Notificação criada: ${title}`);
+                if (settings.keepNotification) {
+                    notifOptions.requireInteraction = true;
+                }
+
+                try {
+                    await api.notifications.create(n.id.toString(), notifOptions);
+                    console.log(`Notificação criada: ${title}`);
+                } catch (err) {
+                    console.warn("Falha ao criar notificação:", err);
+                }
             }
-        });
+        }
 
-        chrome.storage.local.set({ seen: Array.from(seen) });
+        await api.storage.local.set({ seen: Array.from(seen) });
     } catch (error) {
         console.error("Erro ao verificar notificações:", error);
     }
 }
-
 // Listener para alarmes
-chrome.alarms.onAlarm.addListener((alarm) => {
+api.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === "checkGitea") {
         checkNotifications();
     }
 });
 
-// Listener para clique em notificação
-chrome.notifications.onClicked.addListener((id) => {
+// Listener para cliques nas notificações
+api.notifications.onClicked.addListener(async (id) => {
     const url = notificationUrls[id];
     if (url) {
-        chrome.tabs.create({ url: url });
+        await api.tabs.create({ url: url });
     }
-    chrome.notifications.clear(id);
+    await api.notifications.clear(id);
 });
 
-// Listener para quando as configurações mudam
-chrome.storage.onChanged.addListener((changes, namespace) => {
+// Listener para mudanças nas configurações
+api.storage.onChanged.addListener((changes, namespace) => {
     if (namespace === "sync" && (changes.giteaUrl || changes.giteaToken || changes.checkInterval)) {
         console.log("Configurações atualizadas");
         if (changes.checkInterval) {
             checkInterval = changes.checkInterval.newValue;
-            chrome.alarms.clear("checkGitea", () => {
-                startAlarm();
-            });
+            api.alarms.clear("checkGitea").then(() => startAlarm());
         }
         checkNotifications();
     }

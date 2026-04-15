@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Gitea Notifier",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Receba notificações em tempo real do Gitea diretamente no seu navegador",
   "author": "Mvoikolesco",
   "permissions": [
@@ -14,7 +14,8 @@
     "https://*/*"
   ],
   "background": {
-    "service_worker": "src/background/background.js"
+    "service_worker": "src/background/background.js",
+    "scripts": ["src/background/background.js"]
   },
   "action": {
     "default_popup": "src/popup/popup.html",
@@ -31,5 +32,14 @@
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; connect-src http://*:* https://*:*; script-src 'self'"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gitea-notifier@mvoikolesco",
+      "strict_min_version": "109.0"
+    }
   }
 }
